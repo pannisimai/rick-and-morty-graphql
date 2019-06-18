@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Query } from "react-apollo";
 import { gql } from "apollo-boost";
 
+import "./singleCharacter.scss";
+
 const SingleCharacterQuery = gql`
   query($page: Int!, $character: String!) {
     characters(page: $page, filter: { name: $character }) {
@@ -15,6 +17,7 @@ const SingleCharacterQuery = gql`
         name
         id
         image
+        status
       }
     }
   }
@@ -47,13 +50,21 @@ const SingleCharacter = () => {
           if (loading) return <p>Loading...</p>;
           if (error) return <p>Error :(</p>;
 
-          next = next ? next : 1;
+          next = next ? next : pages;
           prev = prev ? prev : 1;
           return (
             <>
               {count > 0 && count}
               {results ? (
-                results.map(({ name, id }) => <p key={id}>{name}</p>)
+                results.map(({ name, image, id, status }) => (
+                  <>
+                    <p key={id}>
+                      <img src={image} alt={name} />
+                      {name}
+                    </p>
+                    <p>{status}</p>
+                  </>
+                ))
               ) : (
                 <p>no results</p>
               )}
@@ -63,7 +74,7 @@ const SingleCharacter = () => {
               <button type="button" onClick={() => setPage(next)}>
                 Next
               </button>
-              <div>{paginationButton(pages, setPage, next - 1)}</div>
+              <div>{paginationButton(pages, setPage, page)}</div>
             </>
           );
         }}
