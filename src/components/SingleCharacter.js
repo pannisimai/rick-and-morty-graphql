@@ -28,57 +28,61 @@ const SingleCharacter = () => {
   const [character, setCharacter] = useState("Rick");
 
   return (
-    <div>
+    <div className="main">
       <input
         type="text"
         value={character}
         onChange={e => setCharacter(e.target.value)}
       />
-      <Query variables={{ page, character }} query={SingleCharacterQuery}>
-        {({
-          loading,
-          error,
-          data: {
-            characters: {
-              info: { next, prev, pages, count } = {},
-              results
+      <div className="container">
+        <Query variables={{ page, character }} query={SingleCharacterQuery}>
+          {({
+            loading,
+            error,
+            data: {
+              characters: {
+                info: { next, prev, pages, count } = {},
+                results
+              } = {}
             } = {}
-          } = {}
-        }) => {
-          console.log(loading, error, results);
+          }) => {
+            console.log(loading, error, results);
 
-          if (loading) return <p>Loading...</p>;
-          if (error) return <p>Error :(</p>;
+            if (loading) return <p>Loading...</p>;
+            if (error) return <p>Error :(</p>;
 
-          next = next ? next : pages;
-          prev = prev ? prev : 1;
-          return (
-            <>
-              {count > 0 && count}
-              {results ? (
-                results.map(({ name, image, id, status }) => (
-                  <>
-                    <p key={id}>
-                      <img src={image} alt={name} />
-                      {name}
-                    </p>
-                    <p>{status}</p>
-                  </>
-                ))
-              ) : (
-                <p>no results</p>
-              )}
-              <button type="button" onClick={() => setPage(prev)}>
-                Prev
-              </button>
-              <button type="button" onClick={() => setPage(next)}>
-                Next
-              </button>
-              <div>{paginationButton(pages, setPage, page)}</div>
-            </>
-          );
-        }}
-      </Query>
+            next = next ? next : pages;
+            prev = prev ? prev : 1;
+            return (
+              <>
+                {results ? (
+                  results.map(({ name, image, id, status }) => (
+                    <>
+                      <p className="card" key={id}>
+                        <img src={image} alt={name} />
+                        <br />
+                        {name}
+                        <p>{status}</p>
+                      </p>
+                    </>
+                  ))
+                ) : (
+                  <p>no results</p>
+                )}
+                <div className="buttons">
+                  <button type="button" onClick={() => setPage(prev)}>
+                    Prev
+                  </button>
+                  <button type="button" onClick={() => setPage(next)}>
+                    Next
+                  </button>
+                  <div>{paginationButton(pages, setPage, page)}</div>
+                </div>
+              </>
+            );
+          }}
+        </Query>
+      </div>
     </div>
   );
 };
